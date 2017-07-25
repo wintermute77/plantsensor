@@ -33,7 +33,7 @@ spi.open(0,0)
 session = boto3.session.Session(profile_name='plantsensor') # see ~/.aws/credentials
 dynamodb = session.resource('dynamodb',region_name='eu-west-1')
 
-table = dynamodb.Table('PlantSensor')
+table = dynamodb.Table('PlantSensor2')
 
 while True:
 
@@ -48,8 +48,9 @@ while True:
 
     response = table.put_item(
         Item={
-            'sensordatestamp': timestamp,
-            'sensorvalue': sensor_level,
+            'PlantName': "Adam",
+            'SensorTime': timestamp,
+            'SensorValue': sensor_level,
         }
     )
 
