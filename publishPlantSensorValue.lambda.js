@@ -2,10 +2,12 @@
 var AWS = require("aws-sdk");
 var sns = new AWS.SNS();
 
-console.log('Loading function');
+console.log('Loading function publishPlantSensorValue');
 
 exports.handler = (event, context, callback) => {
-    //console.log('Received event:', JSON.stringify(event, null, 2));
+
+    console.log('Received event:', JSON.stringify(event, null, 2));
+
     event.Records.forEach((record) => {
 
       if (record.eventName == 'INSERT') {
