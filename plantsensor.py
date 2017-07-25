@@ -19,7 +19,7 @@ def ReadChannel(channel):
 sensor_channel = 0
 
 # Define delay between readings (in seconds)
-delay = 60
+delay = 1800
 
 # Output file
 #log_file_name = 'out.csv'

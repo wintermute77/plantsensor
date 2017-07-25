@@ -2,20 +2,20 @@
 var AWS = require("aws-sdk");
 var sns = new AWS.SNS();
 
-console.log('Loading function publishPlantSensorValue');
+//console.log('Loading function publishPlantSensorValue');
 
 exports.handler = (event, context, callback) => {
 
-    console.log('Received event:', JSON.stringify(event, null, 2));
+    //console.log('Received event:', JSON.stringify(event, null, 2));
 
     event.Records.forEach((record) => {
 
       if (record.eventName == 'INSERT') {
-          var sensordatestamp = JSON.stringify(record.dynamodb.NewImage.sensordatestamp.N);
-          var sensorvalue = JSON.stringify(record.dynamodb.NewImage.sensorvalue.N);
+          var sensordatestamp = parseInt(record.dynamodb.NewImage.sensordatestamp.N);
+          var sensorvalue = parseInt(record.dynamodb.NewImage.sensorvalue.N);
 
-          var d = new Date(sensordatestamp);
-          var sensordate = d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear();
+          var d = new Date(sensordatestamp*1000); // convert to milliseconds
+          var sensordate = d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear() + " " + d.getUTCHours() + ":" + d.getMinutes();
 
           var params = {
               Subject: 'PlantSensor Reading',
