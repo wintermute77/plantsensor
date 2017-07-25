@@ -42,7 +42,7 @@ while True:
     timestamp = int(time.time())
 
     # Write value to log
-    #log_line = "%s,%s\n" % (timestamp,sensor_level)
+    log_line = "%s,%s\n" % (timestamp,sensor_level)
     print log_line
     #log_file.write(log_line)
 
