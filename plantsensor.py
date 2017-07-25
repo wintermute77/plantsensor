@@ -43,7 +43,7 @@ while True:
 
     # Write value to log
     log_line = "%s,%s\n" % (timestamp,sensor_level)
-    print log_line
+    print(log_line)
     #log_file.write(log_line)
 
     response = table.put_item(
