@@ -1,0 +1,19 @@
+{
+  "name": "plantsensor",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:wintermute77/plantsensor.git",
+  "author": "Ben Casey <ben.casey@havasww.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node_modules/.bin/webpack-dev-server",
+    "build": "NODE_ENV=production node_modules/.bin/webpack -p --config webpack.config.js"
+  },
+  "dependencies": {
+    "rickshaw": "^1.6.0"
+  },
+  "devDependencies": {
+    "webpack": "^3.4.1",
+    "webpack-dev-server": "^2.6.1"
+  }
+}
