@@ -14,4 +14,13 @@ module.exports = {
   devServer: {
     contentBase: path.resolve(__dirname, './src'),
   },
+  module: {
+    loaders: [
+      {
+        test: /\.css/,
+        loaders: ['style-loader', 'css-loader'],
+        include: __dirname + '/src'
+      }
+    ],
+  }
 };

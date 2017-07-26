@@ -10,7 +10,9 @@
     "build": "NODE_ENV=production node_modules/.bin/webpack -p --config webpack.config.js"
   },
   "dependencies": {
-    "rickshaw": "^1.6.0"
+    "css-loader": "^0.28.4",
+    "rickshaw": "^1.6.0",
+    "style-loader": "^0.18.2"
   },
   "devDependencies": {
     "webpack": "^3.4.1",
