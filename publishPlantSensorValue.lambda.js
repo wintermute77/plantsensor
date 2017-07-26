@@ -6,6 +6,11 @@ var util = require('util');
 var AWS = require("aws-sdk");
 var docClient = new AWS.DynamoDB.DocumentClient();
 
+var DYNAMODB_OPTIONS = {
+  "table": "PlantSensor2",
+  "plantName": "Adam",
+}
+
 var SLACK_OPTIONS = {
   "hostname":     "hooks.slack.com",
   "channel":      "#hkx-devs",
@@ -25,18 +30,25 @@ exports.handler = (event, context, callback) => {
         return "Hi everyone. I'm probably a little too soggy right now. Please don't water me."
       }
       if (sensorvalue <= 400) {
-        return "Hey guys! I'm comfortably moist. Isn't that great?"
+        if (sensorvalue === 404) {
+          return "Sensor Value 404: Plant Not Found. HAHAHAHAHAHAHAHA."
+        }else{
+          return "Hey guys! I'm comfortably moist. Isn't that great?"
+        }
       }
       if (sensorvalue <= 420) {
-        return "Plant here. Probably going to need some water soon. Just saying."
+        return "Plant here. Letting you know that everything is just A-OK."
       }
       if (sensorvalue <= 440) {
-        return "Guys? You're going to water me soon, right?"
+        return "Hey guys! How's it going? No rush, but I'm probably going to need some water soon. Just saying."
       }
       if (sensorvalue <= 460) {
-        return "<cough> Excuse me. May I have a glass of water?"
+        return "Guys? You're going to water me soon, right?"
       }
       if (sensorvalue <= 480) {
+        return "<cough> Excuse me. May I have a glass of water?"
+      }
+      if (sensorvalue <= 490) {
         return "HELLOOOOO? I'M THIRSTY. GIVE ME WATER."
       }
       if (sensorvalue <= 500) {
@@ -53,17 +65,18 @@ exports.handler = (event, context, callback) => {
      * @return void
      */
     var fetchPreviousSensorValue = function(queryReturnCallback){
-      console.log("Fetching previous sensor value.");
       var params = {
-        TableName : "PlantSensor",
-        Key: {"sensordatestamp": 0},
+        TableName : DYNAMODB_OPTIONS.table,
+        Key: {
+            "PlantName": DYNAMODB_OPTIONS.plantName,
+            "SensorTime": 0
+        }
       };
       docClient.get(params, function(err, data) {
         if (err) {
           console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
         } else {
-          console.log("Previous sensor value: ", data.Item.sensorvalue);
-          queryReturnCallback(parseInt(data.Item.sensorvalue));
+          queryReturnCallback(parseInt(data.Item.SensorValue));
         }
       });
     }
@@ -75,19 +88,17 @@ exports.handler = (event, context, callback) => {
      * @return void
      */
     var updateSensorValue = function(sensorvalue){
-      console.log("Updating sensor value.");
       var params = {
-        TableName : "PlantSensor",
+        TableName : DYNAMODB_OPTIONS.table,
         Item: {
-          "sensordatestamp": 0,
-          "sensorvalue": sensorvalue
+            "PlantName": DYNAMODB_OPTIONS.plantName,
+            "SensorTime": 0,
+            "SensorValue": sensorvalue
         },
       };
       docClient.put(params, function(err, data) {
         if (err) {
           console.error("Unable to update. Error:", JSON.stringify(err, null, 2));
-        } else {
-          console.log("Updated sensor value.");
         }
       });
     }
@@ -118,7 +129,6 @@ exports.handler = (event, context, callback) => {
       var req = https.request(httpOptions, function(res) {
         res.setEncoding('utf8');
         res.on('data', function (chunk) {
-          console.log('Data Sent: ' + JSON.stringify(postData));
           context.done(null, postData);
         });
       });
@@ -127,7 +137,6 @@ exports.handler = (event, context, callback) => {
         console.log('Error sending Slack message: ' + e.message);
       });
 
-      console.log('Sending Data to Slack: ' + JSON.stringify(postData));
       req.write(util.format("%j", postData));
       req.end();
     }
@@ -145,15 +154,15 @@ exports.handler = (event, context, callback) => {
       event.Records.forEach((record) => {
         if (record.eventName == 'INSERT') {
 
-          var sensordatestamp = parseInt(record.dynamodb.NewImage.sensordatestamp.N);
-          var sensorvalue = parseInt(record.dynamodb.NewImage.sensorvalue.N);
-
-          var d = new Date(sensordatestamp*1000); // convert to milliseconds
-          var sensordate = d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear() + " " + d.getUTCHours() + ":" + d.getMinutes();
+          var sensorvalue = parseInt(record.dynamodb.NewImage.SensorValue.N);
 
           if (sensorvalue !== previousSensorValue) {
-            postToSlack(getPlantMessage(sensorvalue), context);
+            // update "previous" sensor value
             updateSensorValue(sensorvalue);
+            // if message has changed, post to Slack
+            if (getPlantMessage(sensorvalue) !== getPlantMessage(previousSensorValue)) {
+              postToSlack(getPlantMessage(sensorvalue), context);
+            }
           }
         }
       });
