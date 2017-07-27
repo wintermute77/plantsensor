@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
       min: 400,
       renderer: 'line',
       series: [{
-          color: 'steelblue',
+          color: 'green',
           data: data
       }]
   });
