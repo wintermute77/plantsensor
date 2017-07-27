@@ -1,18 +1,6 @@
 # Plant Sensor Data Visualiser
 
-Generates a graph from plant sensor data:
-
-https://eu-west-1.console.aws.amazon.com/dynamodb/home?region=eu-west-1#tables:selected=PlantSensor2
-
-* Run a query where PlantName = "Adam" and SensorTime > 0
-* Select all records
-* Actions -> Export to .csv
-
-Then... somehow... convert the CSV into a JSON file so that each line (e.g):
-`"Adam","1501081096","439"`
-becomes:
-`{ x: 1501081096, y: 439 }`
-
+Generates a graph from plant sensor data.
 
 ## Requirements
 
@@ -31,3 +19,14 @@ To start local dev server with live reload:
 To build for production:
 
 `yarn run build`
+
+## To get a data file
+
+https://eu-west-1.console.aws.amazon.com/dynamodb/home?region=eu-west-1#tables:selected=PlantSensor2
+
+* Run a query where PlantName = "Adam" and SensorTime > 0
+* Sort _ascending_
+* Select all records
+* Actions -> Export to .csv
+* Move to scripts folder as "data.csv"
+* Run the transform tool on it: `cd report/scripts && node transform-csv.js`
