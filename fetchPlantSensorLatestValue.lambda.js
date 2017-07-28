@@ -74,7 +74,7 @@ exports.handler = function(event, context) {
         {"val": 400, "message": "Hi " + messageFields.userName +  ". Everything good here, thanks. How about you?"},
         {"val": 450, "message": "Oh, I'm fine. No, really. Thanks though."},
         {"val": 470, "message": "Hey, thanks for asking. Maybe a wee drop of water wouldn't hurt. Only a little, mind."},
-        {"val": 480, "message": "Actually, I'm pretty thirsty. Yeah, I'll have whatever your having. Cheers."},
+        {"val": 480, "message": "Actually, I'm pretty thirsty. Yeah, I'll have whatever you're having. Cheers!"},
         {"val": 490, "message": "I thought you'd never ask! I'm parched, I tell you. Parched."},
         {"val": 500, "message": "At LAST. Do I look like a fucking cactus to you?"},
         {"val": 550, "message": "<gasp>... water... water..."}
