@@ -54,8 +54,9 @@ exports.handler = function(event, context) {
 
 
     /**
-     * [getSensorThresholdMessage description]
-     * @type {[type]}
+     * Return a human-friendly time value.
+     * @param  {Date} dt
+     * @return {String}   Time
      */
     var getHumanTime = function(dt){
       return padTimeValue(dt.getUTCHours()) + ":" + padTimeValue(dt.getMinutes());
