@@ -25,38 +25,26 @@ var SLACK_OPTIONS = {
 
 exports.handler = (event, context, callback) => {
 
-    var getPlantMessage = function(sensorvalue){
-      if (sensorvalue <= 350) {
-        return "Hi everyone. I'm probably a little too soggy right now. Please don't water me."
-      }
-      if (sensorvalue <= 400) {
-        if (sensorvalue === 404) {
-          return "Sensor Value 404: Plant Not Found. HAHAHAHAHAHAHAHA."
-        }else{
-          return "Hey guys! I'm comfortably moist. Isn't that great?"
-        }
-      }
-      if (sensorvalue <= 420) {
-        return "Plant here. Letting you know that everything is just A-OK."
-      }
-      if (sensorvalue <= 440) {
-        return "Hey guys! How's it going? No rush, but I'm probably going to need some water soon. Just saying."
-      }
-      if (sensorvalue <= 460) {
-        return "Guys? You're going to water me soon, right?"
-      }
-      if (sensorvalue <= 480) {
-        return "<cough> Excuse me. May I have a glass of water?"
-      }
-      if (sensorvalue <= 490) {
-        return "HELLOOOOO? I'M THIRSTY. GIVE ME WATER."
-      }
-      if (sensorvalue <= 500) {
-        return "You feckless fuckers. I've got a mouth like Ghandi's flip flop. Look at me, all wilted and pathetic. You bastards."
-      }
-      if (sensorvalue > 500) {
-        return "Hello. This is an automated message. Your plant is dead."
-      }
+    /**
+     * Return a status message corresponding to the sensor value
+     * @param  {Integer} sensorValue
+     * @param  {Object} messageFields  A list of fields that can be optionally added to the message.
+     * @return {String}   Message
+     */
+    var getSensorThresholdMessage = function(sensorValue, messageFields){
+      var thresholds = [
+        {"val": 350, "message": "Hi everyone. I'm probably a little too soggy right now. Please don't water me."},
+        {"val": 400, "message": "Hey guys! I'm comfortably moist. Isn't that great?"},
+        {"val": 450, "message": "Plant here. Letting you know that everything is just A-OK."},
+        {"val": 470, "message": "Hey guys! How's it going? No rush, but I'm probably going to need some water soon. Just saying."},
+        {"val": 480, "message": "Guys? You're going to water me soon, right?"},
+        {"val": 490, "message": "<cough> Excuse me. May I have a glass of water?"},
+        {"val": 500, "message": "HELLOOOOO? I'M THIRSTY. GIVE ME WATER."},
+        {"val": 550, "message": "You feckless fuckers. I've got a mouth like Ghandi's flip flop. Look at me, all wilted and pathetic. You bastards."}
+      ];
+      return thresholds.reduce(function(msg, threshold){
+        return (msg === null && sensorValue < threshold.val) ? threshold.message : msg;
+      }, null);
     }
 
     /**
@@ -160,8 +148,9 @@ exports.handler = (event, context, callback) => {
             // update "previous" sensor value
             updateSensorValue(sensorvalue);
             // if message has changed, post to Slack
-            if (getPlantMessage(sensorvalue) !== getPlantMessage(previousSensorValue)) {
-              postToSlack(getPlantMessage(sensorvalue), context);
+            var latestMessage = getSensorThresholdMessage(sensorvalue);
+            if (latestMessage !== getSensorThresholdMessage(previousSensorValue)) {
+              postToSlack(latestMessage, context);
             }
           }
         }
